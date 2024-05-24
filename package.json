@@ -1,0 +1,26 @@
+{
+  "name": "arcadeblog",
+  "version": "1.0.0",
+  "description": "Una pagina para crear blog de videojuegos",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/diego1216/arcadeblog.git"
+  },
+  "author": "Diego Alberto López Arana",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/diego1216/arcadeblog/issues"
+  },
+  "homepage": "https://github.com/diego1216/arcadeblog#readme",
+  "dependencies": {
+    "concurrently": "^8.2.2",
+    "express": "^4.19.2",
+    "nodemon": "^3.1.0",
+    "pug": "^3.0.2",
+    "sass": "^1.77.2"
+  }
+}
