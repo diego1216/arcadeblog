@@ -1,0 +1,16 @@
+extends layout 
+
+block content
+  .contenedor__todo
+    .caja
+      .caja_register
+        h3 ¿Aún no tienes una cuenta?
+        p Regístrate para que puedas iniciar sesión
+        a#btn__registrarse(href="/registro") Regístrarse
+    .contenedor__login-register
+      form.formulario__login(action="/login", method="POST")
+        h2 Iniciar Sesión
+        input(type="text", name= "username", id="usuario", placeholder="correo", required)
+        input(type="password", name= "password", id="contraseña", placeholder="Contraseña", required)
+        button(type="submit", value= "iniciar sesión") Entrar
+

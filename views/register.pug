@@ -1,0 +1,17 @@
+extends layout
+
+block content
+  .contenedor__todo
+    .caja
+      .caja_register
+        h3 ¿Ya tienes una cuenta?
+        p Inicia sesión aquí
+        a#btn__registrarse(href="/login") login
+    .contenedor__login-register
+      form.formulario__login(action="/userRegistro", method="POST")
+        h2 Regístrarse
+        input(type="text",name="nombre", placeholder="Usuario")
+        input(type="email",name="correo", placeholder="Correo Electronico")
+        input(type="password",name="contraseña", placeholder="Contraseña")
+        input(type="password",name="confirmcontraseña", placeholder="confirmar contraseña")
+        button(type="submit") Regístrarse

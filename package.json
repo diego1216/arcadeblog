@@ -4,7 +4,10 @@
   "description": "Una pagina para crear blog de videojuegos",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+   
+    "sass": "sass styles/sass/styles.sass:public/css/styles.css",
+    "sass-watch": "sass --watch styles/sass/styles.sass:public/css/styles.css",
+    "start": "concurrently \"npm run sass-watch\" \"nodemon server.js\""
   },
   "repository": {
     "type": "git",
@@ -17,9 +20,18 @@
   },
   "homepage": "https://github.com/diego1216/arcadeblog#readme",
   "dependencies": {
+    "axios": "^1.7.2",
+    "bcrypt": "^5.1.1",
     "concurrently": "^8.2.2",
+    "connect-flash": "^0.1.1",
+    "cookie-parser": "^1.4.6",
+    "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "express-session": "^1.18.0",
+    "jsonwebtoken": "^9.0.2",
     "nodemon": "^3.1.0",
+    "passport": "^0.7.0",
+    "passport-local": "^1.0.0",
     "pug": "^3.0.2",
     "sass": "^1.77.2"
   }
