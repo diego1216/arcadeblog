@@ -1,0 +1,51 @@
+extends layout
+
+block content
+  .container
+    .form-container
+      h2.publicar Llena los datos para públicar
+      form.form(action='/publicaciones', method='POST', enctype='multipart/form-data')
+        input(type='hidden', name='usuario_id', value='1') 
+        .form-group
+          input.form-control(type='text', name='titulo', placeholder='Título')
+        .form-group
+          textarea.form-control.no-resize(name='contenido', placeholder='Contenido')
+        .form-group
+          input.form-control(type='file', name='imagen', id='imagen', accept='image/*', style='display: none;')
+          button.btn7(type='button', onclick="document.getElementById('imagen').click()") Seleccionar imagen
+        .form-group
+          input.form-control(type='file', name='video', id='video', accept='video/*', style='display: none;')
+          button.btn8(type='button', onclick="document.getElementById('video').click()") Seleccionar video
+        button.btn9(type='submit') Publicar
+
+
+    .publicaciones
+        each publicacion in publicaciones
+          .publicacion
+            h2.publicacion-titulo= publicacion.titulo
+            p.publicacion-contenido= publicacion.contenido
+            if publicacion.imagen
+              img.publicacion-imagen(src=publicacion.imagen, alt="")
+            if publicacion.video
+              video.publicacion-video(controls)
+                source(src=publicacion.video, type="video/mp4")
+            p.publicacion-likes #{publicacion.likes} 
+            p.publicacion-comentarios #{publicacion.comentarios}
+            
+            .comment-section
+              form.like-form(action=`/publicaciones/${publicacion.id}/like`, method='POST')
+                input(type='hidden', name='usuario_id', value='1') 
+                button.btn10(type='submit')
+                  if publicacion.likes 
+                    img(src='/imagenes/corazon2.png', alt='Like')
+                  else 
+                    img(src='/imagenes/corazon.png', alt='Like')
+              
+              form.comentar-form(action=`/publicaciones/${publicacion.id}/comentar`, method='POST')
+                input(type='hidden', name='usuario_id', value='1') 
+                input(type='hidden', name='publicacion_id', value=`${publicacion.id}`)
+                input.form-control(type='text', name='comentario', placeholder='Comentar')
+                button.btn11(type='submit') Comentar
+
+
+

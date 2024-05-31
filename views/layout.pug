@@ -22,11 +22,15 @@ html(lang="en")
               button(type="submit") Buscar
           if user
             li
-              a.btn(href="/logout") Logout
+              a.btn4(href="/logout") Logout
+            
           else
             li
               a.btn2(href="/registro") Registrar
             li
               a.btn(href="/login") Login
-    
+            li
+              a.btn3(href="/publicacion") Perfil
+           
+    .content
     block content

@@ -26,6 +26,31 @@ app.use(express.json());
 const router = require('./routes/routes');
 app.use('/', router);
 
+// Suponiendo que tienes una lista de publicaciones
+const publicaciones = [
+  {
+    id: 1,
+    titulo: 'Título de la Publicación 1',
+    contenido: 'Contenido de la Publicación 1',
+    imagen: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSwfGB6dUnr2_mIK2bbLG3JM0IWyfATg0efwQ&s'
+},
+
+  { 
+      id: 2, 
+      titulo: 'Título de la Publicación 2', 
+      contenido: 'Contenido de la Publicación 2', 
+      imagen: 'ruta/a/la/imagen2.jpg', // Ruta de la imagen
+      video: 'ruta/a/el/video2.mp4' // Ruta del video
+  },
+];
+
+// Ruta para /publicacion
+app.get('/publicacion', (req, res) => {
+  // Renderiza una plantilla (por ejemplo, usando un motor de plantillas como EJS o Handlebars)
+  // y pasa la lista de publicaciones como datos a la plantilla
+  res.render('publicacion', { publicaciones: publicaciones });
+});
+
 // Puerto en el que escucha el servidor 
 const port = 4444;
 app.listen(port, () => {

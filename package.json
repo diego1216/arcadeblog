@@ -4,7 +4,6 @@
   "description": "Una pagina para crear blog de videojuegos",
   "main": "server.js",
   "scripts": {
-   
     "sass": "sass styles/sass/styles.sass:public/css/styles.css",
     "sass-watch": "sass --watch styles/sass/styles.sass:public/css/styles.css",
     "start": "concurrently \"npm run sass-watch\" \"nodemon server.js\""
@@ -29,6 +28,7 @@
     "express": "^4.19.2",
     "express-session": "^1.18.0",
     "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.4.0",
     "nodemon": "^3.1.0",
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
