@@ -10,7 +10,7 @@ block content
     .contenedor__login-register
       form.formulario__login(action="/login", method="POST")
         h2 Iniciar Sesión
-        input(type="text", name= "username", id="usuario", placeholder="correo", required)
+        input(type="email", name= "email", id="email", placeholder="correo", required)
         input(type="password", name= "password", id="contraseña", placeholder="Contraseña", required)
         button(type="submit", value= "iniciar sesión") Entrar
 

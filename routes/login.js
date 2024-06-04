@@ -1,31 +1,21 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
-const axios = require('axios')
+const authMiddleware = require('../middlewares/authMiddleware');
 
-// Define la ruta para el login
+
+// Ruta para mostrar el formulario de login
 router.get('/', (req, res) => {
-  res.render('login', { title: '', user: req.user != null ? `${req.user.nombre}` : '' });
- });
+  res.render('login', {title: 'Iniciar sesión'});
+});
 
+router.post('/', passport.authenticate('local', {
+  failureRedirect: '/login',
+  failureFlash: true
+}), (req, res) => {
+  const token = authMiddleware.generateToken(req.user.id, '1h');
+  res.cookie('token', token, { httpOnly: true, secure: false });
+  res.redirect('/');
+});
 
-// Define la ruta para el login
-router.post('/', async (req, res) => {
-    const { email, password } = req.body;
-    try {
-      await userModel.logearUsuario( email, password);
-      // Extrae el token JWT de la respuesta de la API
-      const token = response.data.token;
-  
-      // Establece la cookie con el token JWT
-      res.cookie('token', token, { httpOnly: true, secure: false });
-  
-      // Redirige al usuario a la página del carrito u otra página deseada
-      res.redirect('/');
-    } catch (error) {
-      console.error('Error de inicio', error);
-      res.status(500).send('Error interno ');
-    }
-  });
-  
   module.exports = router;

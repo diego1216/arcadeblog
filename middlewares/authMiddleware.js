@@ -1,10 +1,12 @@
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const bcrypt = require('bcrypt');
+const fs = require('fs');
+const privateKey = fs.readFileSync('./config/jwtRS256.key'); // Lee la llave privada desde un archivo
 
-
+// Middleware para autenticar usuarios mediante tokens JWT
 async function authenticate(req, res, next) {
-    // Verifica si hay un token en las cookies de la solicitud
+    // Revisa si existe un token en las cookies
     const token = req.cookies.token;
 
     // Si no hay token, redirige al usuario al login
@@ -13,55 +15,72 @@ async function authenticate(req, res, next) {
     }
 
     try {
-        // Verifica el token usando la clave privada RSA del entorno
-        const decoded = jwt.verify(token, process.env.RSA_PRIVATE_KEY);
+        // Verifica el token usando la llave privada
+        const decoded = jwt.verify(token, privateKey);
 
-        // Almacena el ID del usuario en la solicitud para su posterior uso
+        // Almacena el ID del usuario extraído del token en el objeto de solicitud (request)
         req.userId = decoded.userId;
 
+        // Continúa con el siguiente middleware
         next();
 
     } catch (err) {
-        // Si hay un error en la verificación del token, redirige al usuario al login
+        // Si falla la verificación del token, redirige al usuario al login
         return res.redirect('/login');
     }
 }
 
 // Función para generar un token JWT
 function generateToken(data, expirationTime) {
-    // Se firma el token utilizando el algoritmo RS256 y la clave privada RSA del entorno
-    return jwt.sign({ data }, process.env.RSA_PRIVATE_KEY, { algorithm: 'RS256', expiresIn: expirationTime });
+    // Firma el token utilizando la llave privada
+    return jwt.sign({ data }, privateKey, { algorithm: 'RS256', expiresIn: expirationTime });
 }
 
-// Función para encriptar datos
+// Función para encriptar datos utilizando AES-256-GCM
 function encryptData(text) {
-    // Se obtiene la clave privada AES del entorno y se convierte en un buffer
+    // Obtiene la clave y el IV desde las variables de entorno
     const key = Buffer.from(process.env.AES_PRIVATE_KEY, 'hex');
-    // Se obtiene el IV del entorno y se convierte en un buffer
     const iv = Buffer.from(process.env.AES_IV, 'hex');
-    // Se crea un cifrador usando el algoritmo AES-256-GCM, la clave y el IV
+
+    // Crea un cifrador AES con GCM (Modo de Contraseña Galois/Counter)
     const cipher = crypto.createCipheriv('aes-256-gcm', key, iv);
-    // Se encripta el texto en formato UTF-8 y se convierte a hexadecimal
+
+    // Actualiza el texto plano a través del cifrado
     let encrypted = cipher.update(text, 'utf8', 'hex');
     encrypted += cipher.final('hex');
-    // Se devuelve el IV, la AuthTag y el texto encriptado, separados por ':'
+ 
+    // Retorna el texto cifrado junto con el IV y el tag de autenticación
     return iv.toString('hex') + ':' + cipher.getAuthTag().toString('hex') + ':' + encrypted;
 }
 
-// Función asincrónica para obtener el hash de una contraseña
+// Función asincrónica para obtener el hash de una contraseña usando bcrypt
 async function getHash(passwordString) {
-    // Se obtiene el número de rondas de sal para el hash de contraseñas desde el entorno y se convierte a entero
+    // Obtiene el número de rondas de sal desde las variables de entorno
     const saltRounds = parseInt(process.env.PASSWORD_SALT_ROUNDS);
-    // Se genera el hash de la contraseña usando bcrypt y el número de rondas de sal
+   
+    // Genera el hash de la contraseña utilizando bcrypt
     const password_hash = await bcrypt.hash(passwordString, saltRounds);
-    // Se devuelve el hash generado
+
+    // Retorna el hash de la contraseña
     return password_hash;
 }
 
+// Middleware para agregar el usuario autenticado a la variable locals en la respuesta
+function addUserToLocals(req, res, next) {
+    // Verifica si el usuario está autenticado
+    if (req.isAuthenticated()) {
+        res.locals.user = req.user; // Agrega el usuario autenticado a res.locals
+    } else {
+        res.locals.user = null; // Si no está autenticado, establece res.locals.user como null
+    }
+    next(); // Continúa con el siguiente middleware
+}
 
+// Exporta las funciones y middleware para su uso en otros archivos
 module.exports = {
     authenticate,
     encryptData,
     generateToken,
-    getHash
-};
+    getHash,
+    addUserToLocals
+};   

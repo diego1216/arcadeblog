@@ -1,66 +1,55 @@
-const usuarioModel = require('../models/userModels');
-const authMiddleware = require('../middlewares/authMiddleware');
+const userModel = require('../models/userModels');
+const authMiddleWare = require('../middlewares/authMiddleware');
 
-async function registrarUsuario(req, res) {
-    const { nombre, correo, contraseña, confirmcontraseña } = req.body;
-    console.log(nombre, correo, contraseña, confirmcontraseña);
-  
-    try {
-      if (contraseña !== confirmcontraseña) {
-        return res.status(400).send('Las contraseñas no coinciden');
-      }
-  
-      const correoExistente = await usuarioModel.obtenerPorEmail(correo);
-      if (correoExistente) {
-        return res.status(400).send('El usuario ya está registrado');
-      }
-  
-      const hashedPassword = await authMiddleware.getHash(contraseña);
-      console.log("Hashed Password:", hashedPassword);
-  
-      await usuarioModel.registrar(nombre, correo, hashedPassword);
-      console.log("Se registro el usuario correctamente", nombre, correo, hashedPassword);
-  
-  
-      res.redirect('/login');
-    } catch (error) {
-      console.error("error en el registro", error.message);
-      res.status(500).send('llene los espacios para el registro');
-    }
-  }
-
-async function obtenerUsuarioPorusuario(req, res) {
-  try {
-    const { usuario } = req.params;
-    const usuarioEncontrado = await usuarioModel.obtenerPorusuario(usuario);
-    if (usuarioEncontrado) {
-      res.json(usuarioEncontrado);
-    } else {
-      res.status(404).send('Usuario no encontrado');
-    }
-  } catch (error) {
-    console.error('Error al obtener usuario por nombre:', error);
-    res.status(500).send('Error al obtener usuario por nombre');
-  }
+// Función asincrónica para registrar un usuario
+async function registrarUsuario(nombre, email, password_hash) {
+        console.log('nombre, email, password_hash', nombre, email, password_hash);
+        // Se encriptan el nombre, email y hash de la contraseña de forma paralela
+        let [nombreSeguro, emailSeguro, passwordHashSeguro] = await Promise.all([
+            authMiddleWare.encryptData(nombre),
+            authMiddleWare.encryptData(email),
+            authMiddleWare.encryptData(password_hash)
+        ]);
+    
+        console.log('nombreSeguro = ', nombreSeguro, ' emailSeguro = ', emailSeguro, ' PasswordHashSeguro = ', passwordHashSeguro);
+        
+        const Usuarios = {
+            nombre: nombreSeguro,
+            email: emailSeguro,
+            password: passwordHashSeguro
+        }
+        return await userModel.registrarUsuario(Usuarios);
+    
 }
 
-async function obtenerUsuarioPorId(req, res) {
-  try {
-    const { id } = req.params;
-    const usuario = await usuarioModel.obtenerPorId(id);
-    if (usuario) {
-      res.json(usuario);
-    } else {
-      res.status(404).send('Usuario no encontrado');
+
+
+// Función asincrónica para logear a un usuario
+async function logearUsuario(usuario) {
+    console.log('logearUsuario objeto usuario = ', usuario);
+    console.log('logearUsuario email = ', usuario.email);
+    console.log('logearUsuario password = ', usuario.password);
+
+    // Se encriptan el nombre y la contraseña de forma paralela
+    let [emailSeguro, passwordSeguro] = await Promise.all([
+        authMiddleWare.encryptData(usuario.email),
+        authMiddleWare.encryptData(usuario.password)
+    ]);
+
+    console.log(' encriptaciones = '. emailSeguro, passwordSeguro);
+
+    const Usuarios = {
+        email: emailSeguro,
+        password: passwordSeguro
     }
-  } catch (error) {
-    console.error(error);
-    res.status(500).send('Error al obtener usuario por ID');
-  }
+    console.log("usuario = ", Usuarios)
+    // Se intenta logear al usuario en la aplicación
+    return await userModel.logearUsuario(Usuarios);
 }
+
+
 
 module.exports = {
-  registrarUsuario,
-  obtenerUsuarioPorusuario,
-  obtenerUsuarioPorId,
+    registrarUsuario,
+    logearUsuario,
 };
