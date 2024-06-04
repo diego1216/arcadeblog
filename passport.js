@@ -5,7 +5,7 @@ require('dotenv').config(); // Importa y carga las variables de entorno desde el
 
 // Opciones para configurar la estrategia JWT
 const opts = {
-    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(), // Extrae el token JWT del encabezado de autorización Bearer
+    jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(), // Extrae el token JWT del encabezado de autorización 
     secretOrKey: process.env.JWT_SECRET, // Clave secreta utilizada para firmar y verificar el token JWT
 };
 

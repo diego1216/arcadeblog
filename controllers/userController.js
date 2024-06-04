@@ -1,10 +1,10 @@
 const userModel = require('../models/userModels');
 const authMiddleWare = require('../middlewares/authMiddleware');
 
-// Función asincrónica para registrar un usuario
+// Función asincrónica que sirve para registrar al usuario
 async function registrarUsuario(nombre, email, password_hash) {
         console.log('nombre, email, password_hash', nombre, email, password_hash);
-        // Se encriptan el nombre, email y hash de la contraseña de forma paralela
+        // Se encriptan los datos
         let [nombreSeguro, emailSeguro, passwordHashSeguro] = await Promise.all([
             authMiddleWare.encryptData(nombre),
             authMiddleWare.encryptData(email),
